@@ -20,6 +20,11 @@ public class KeyStore {
     private final RSAPublicKey publicKey;
     private final PrivateKey privateKey;
 
+    /**
+     * See the test suite for usages
+     * @param publicKeyContent raw RSA public key
+     * @param privateKeyContent raw RSA private key
+     */
     @SneakyThrows
     public KeyStore(String publicKeyContent, String privateKeyContent) {
         privateKeyContent = stripPrivateKey(privateKeyContent);
@@ -32,7 +37,6 @@ public class KeyStore {
 
         X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyContent));
         this.publicKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
-
     }
 
     @SneakyThrows
