@@ -16,6 +16,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class KeyStoreTest {
 
@@ -27,6 +28,9 @@ class KeyStoreTest {
         KeyStore encryptionKeyStore = new KeyStore(publicKeyContent, false);
         KeyStore decryptionKeyStore = new KeyStore(privateKeyContent);
         this.doEncryptAndDecrypt(encryptionKeyStore, decryptionKeyStore);
+
+        assertThrows(IllegalArgumentException.class, () -> decryptionKeyStore.encryptAndEncode("secret"));
+        assertThrows(IllegalArgumentException.class, () -> encryptionKeyStore.decodeAndDecrypt("secret"));
     }
 
     @Test
