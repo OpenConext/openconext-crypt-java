@@ -24,8 +24,8 @@ class KeyStoreTest {
         String privateKeyContent = this.readFile("private_key_pkcs8.pem");
         String publicKeyContent = this.readFile("public_key.pem");
 
-        KeyStore encryptionKeyStore = new KeyStore(publicKeyContent, false);
-        KeyStore decryptionKeyStore = new KeyStore(privateKeyContent);
+        KeyStore encryptionKeyStore = new RSAKeyStore(publicKeyContent, false);
+        KeyStore decryptionKeyStore = new RSAKeyStore(privateKeyContent);
         this.doEncryptAndDecrypt(encryptionKeyStore, decryptionKeyStore);
 
         assertThrows(IllegalArgumentException.class, () -> decryptionKeyStore.encryptAndEncode("secret"));
@@ -34,7 +34,7 @@ class KeyStoreTest {
 
     @Test
     void encryptAndDecryptDevMode() throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        KeyStore keyStore = new KeyStore();
+        KeyStore keyStore = new RSAKeyStore();
         this.doEncryptAndDecrypt(keyStore, keyStore);
     }
 
