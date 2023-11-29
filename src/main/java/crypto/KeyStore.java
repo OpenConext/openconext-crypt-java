@@ -87,7 +87,7 @@ public class KeyStore {
     }
 
     public boolean isEncryptedSecret(String input) {
-        return base64Pattern.matcher(input).matches() && input.length() == 344;
+        return input.length() == 344 && base64Pattern.matcher(input).matches();
     }
 
     private String stripPublicKey(String publicKey) {

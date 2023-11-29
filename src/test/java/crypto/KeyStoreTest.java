@@ -48,7 +48,7 @@ class KeyStoreTest {
     }
 
     private String readFile(String path) throws IOException {
-        InputStream inputStream = KeyStore.class.getClassLoader().getResourceAsStream(path);
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
         return IOUtils.toString(inputStream, Charset.defaultCharset());
     }
 
