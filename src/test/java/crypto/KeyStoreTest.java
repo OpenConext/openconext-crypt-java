@@ -15,8 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class KeyStoreTest {
 
@@ -42,9 +41,10 @@ class KeyStoreTest {
     private void doEncryptAndDecrypt(KeyStore encryptionKeyStore, KeyStore decryptionKeyStore) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         String secret = UUID.randomUUID().toString();
         String encryptedSecret = encryptionKeyStore.encryptAndEncode(secret);
+        assertTrue(decryptionKeyStore.isEncryptedSecret(encryptedSecret));
+
         String decodedSecret = decryptionKeyStore.decodeAndDecrypt(encryptedSecret);
         assertEquals(secret, decodedSecret);
-
     }
 
     private String readFile(String path) throws IOException {

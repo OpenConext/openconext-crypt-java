@@ -12,6 +12,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.regex.Pattern;
 
 /**
  * Utility class for encrypting and decrypting secrets with RSA private / public keys
@@ -20,6 +21,7 @@ public class KeyStore {
 
     private final PublicKey publicKey;
     private final PrivateKey privateKey;
+    private final Pattern base64Pattern = Pattern.compile("(([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?){1}");
 
     /**
      * Use this constructor for local development / testing where it does not matter which keypair encrypts and
@@ -82,6 +84,10 @@ public class KeyStore {
         decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] decryptedMessageBytes = decryptCipher.doFinal(Base64.getDecoder().decode(encodedEncryptedSecret));
         return new String(decryptedMessageBytes, StandardCharsets.UTF_8);
+    }
+
+    public boolean isEncryptedSecret(String input) {
+        return base64Pattern.matcher(input).matches() && input.length() == 344;
     }
 
     private String stripPublicKey(String publicKey) {
