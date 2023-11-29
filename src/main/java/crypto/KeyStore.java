@@ -63,7 +63,7 @@ public class KeyStore {
         this.publicKey = null;
     }
 
-    public String encryptAndEncode(String secret) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+    public String encryptAndEncode(String secret) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         if (this.publicKey == null) {
             throw new IllegalArgumentException("For encryption a publicKey is required");
         }
