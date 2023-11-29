@@ -1,11 +1,14 @@
 package crypto;
 
-import lombok.SneakyThrows;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -22,8 +25,7 @@ public class KeyStore {
      * Use this constructor for local development / testing where it does not matter which keypair encrypts and
      * decrypts. See the test suite for usages.
      */
-    @SneakyThrows
-    public KeyStore() {
+    public KeyStore() throws NoSuchAlgorithmException {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(2048);
         KeyPair pair = generator.generateKeyPair();
@@ -37,8 +39,7 @@ public class KeyStore {
      * @param publicKeyContent raw RSA public key
      * @param ignore to differentiate between constructors
      */
-    @SneakyThrows
-    public KeyStore(String publicKeyContent, boolean ignore) {
+    public KeyStore(String publicKeyContent, boolean ignore) throws NoSuchAlgorithmException, InvalidKeySpecException {
         publicKeyContent = stripPublicKey(publicKeyContent);
 
         KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -52,8 +53,7 @@ public class KeyStore {
      * suite for usages.
      * @param privateKeyContent raw RSA private key
      */
-    @SneakyThrows
-    public KeyStore(String privateKeyContent) {
+    public KeyStore(String privateKeyContent) throws NoSuchAlgorithmException, InvalidKeySpecException {
         privateKeyContent = stripPrivateKey(privateKeyContent);
 
         KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -63,8 +63,7 @@ public class KeyStore {
         this.publicKey = null;
     }
 
-    @SneakyThrows
-    public String encryptAndEncode(String secret) {
+    public String encryptAndEncode(String secret) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         if (this.publicKey == null) {
             throw new IllegalArgumentException("For encryption a publicKey is required");
         }
@@ -75,8 +74,7 @@ public class KeyStore {
         return Base64.getEncoder().encodeToString(encryptedMessageBytes);
     }
 
-    @SneakyThrows
-    public String decodeAndDecrypt(String encodedEncryptedSecret) {
+    public String decodeAndDecrypt(String encodedEncryptedSecret) throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         if (this.privateKey == null) {
             throw new IllegalArgumentException("For encryption a privateKey is required");
         }
