@@ -25,7 +25,8 @@ public class RSAKeyStore implements KeyStore {
      * Use this constructor for local development / testing where it does not matter which keypair encrypts and
      * decrypts. See the test suite for usages.
      */
-    public RSAKeyStore() throws NoSuchAlgorithmException {
+    @SneakyThrows
+    public RSAKeyStore() {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(2048);
         KeyPair pair = generator.generateKeyPair();
