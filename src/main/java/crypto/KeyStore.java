@@ -5,8 +5,7 @@ import lombok.SneakyThrows;
 import javax.crypto.Cipher;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
+import java.security.*;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -17,11 +16,25 @@ import java.util.Base64;
  */
 public class KeyStore {
 
-    private final RSAPublicKey publicKey;
+    private final PublicKey publicKey;
     private final PrivateKey privateKey;
 
     /**
-     * See the test suite for usages
+     * Use this constructor for local development / testing where it does not matter which keypair encrypts and
+     * decrypts. See the test suite for usages.
+     */
+    @SneakyThrows
+    public KeyStore() {
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(4096);
+        KeyPair pair = generator.generateKeyPair();
+        this.publicKey = pair.getPublic();
+        this.privateKey = pair.getPrivate();
+    }
+
+    /**
+     * Use this constructor if you have access to a keypair. See the README for how to create them. See the test
+     * suite for usages.
      * @param publicKeyContent raw RSA public key
      * @param privateKeyContent raw RSA private key
      */
@@ -36,7 +49,7 @@ public class KeyStore {
         this.privateKey = kf.generatePrivate(keySpecPKCS8);
 
         X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyContent));
-        this.publicKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+        this.publicKey = kf.generatePublic(keySpecX509);
     }
 
     @SneakyThrows
