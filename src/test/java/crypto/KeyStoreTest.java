@@ -18,21 +18,22 @@ class KeyStoreTest {
         String privateKeyContent = this.readFile("private_key_pkcs8.pem");
         String publicKeyContent = this.readFile("public_key.pem");
 
-        KeyStore keyStore = new KeyStore(publicKeyContent, privateKeyContent);
-        this.doEncryptAndDecrypt(keyStore);
+        KeyStore encryptionKeyStore = new KeyStore(publicKeyContent, false);
+        KeyStore decryptionKeyStore = new KeyStore(privateKeyContent);
+        this.doEncryptAndDecrypt(encryptionKeyStore, decryptionKeyStore);
     }
 
     @SneakyThrows
     @Test
     void encryptAndDecryptDevMode() {
         KeyStore keyStore = new KeyStore();
-        this.doEncryptAndDecrypt(keyStore);
+        this.doEncryptAndDecrypt(keyStore, keyStore);
     }
 
-    private void doEncryptAndDecrypt(KeyStore keyStore) {
+    private void doEncryptAndDecrypt(KeyStore encryptionKeyStore, KeyStore decryptionKeyStore) {
         String secret = UUID.randomUUID().toString();
-        String encryptedSecret = keyStore.encryptAndEncode(secret);
-        String decodedSecret = keyStore.decodeAndDecrypt(encryptedSecret);
+        String encryptedSecret = encryptionKeyStore.encryptAndEncode(secret);
+        String decodedSecret = decryptionKeyStore.decodeAndDecrypt(encryptedSecret);
         assertEquals(secret, decodedSecret);
 
     }

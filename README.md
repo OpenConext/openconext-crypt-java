@@ -2,7 +2,7 @@
 
 Create private / public keypair
 ```
-openssl genrsa -traditional -out private_key.pem 4096
+openssl genrsa -traditional -out private_key.pem 2048
 openssl rsa -pubout -in private_key.pem -out public_key.pem
 ```
 Convert private key to pkcs8 format in order to import it from Java

@@ -25,34 +25,49 @@ public class KeyStore {
     @SneakyThrows
     public KeyStore() {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-        generator.initialize(4096);
+        generator.initialize(2048);
         KeyPair pair = generator.generateKeyPair();
         this.publicKey = pair.getPublic();
         this.privateKey = pair.getPrivate();
     }
 
     /**
-     * Use this constructor if you have access to a keypair. See the README for how to create them. See the test
+     * Use this constructor if you have need to encrypt secrets. See the README for how to create keys and see the test
      * suite for usages.
      * @param publicKeyContent raw RSA public key
+     * @param ignore to differentiate between constructors
+     */
+    @SneakyThrows
+    public KeyStore(String publicKeyContent, boolean ignore) {
+        publicKeyContent = stripPublicKey(publicKeyContent);
+
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyContent));
+        this.publicKey = kf.generatePublic(keySpecX509);
+        this.privateKey = null;
+    }
+
+    /**
+     * Use this constructor if you have need to decrypt secrets. See the README for how to create keys and see the test
+     * suite for usages.
      * @param privateKeyContent raw RSA private key
      */
     @SneakyThrows
-    public KeyStore(String publicKeyContent, String privateKeyContent) {
+    public KeyStore(String privateKeyContent) {
         privateKeyContent = stripPrivateKey(privateKeyContent);
-        publicKeyContent = stripPublicKey(publicKeyContent);
 
         KeyFactory kf = KeyFactory.getInstance("RSA");
 
         PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyContent));
         this.privateKey = kf.generatePrivate(keySpecPKCS8);
-
-        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyContent));
-        this.publicKey = kf.generatePublic(keySpecX509);
+        this.publicKey = null;
     }
 
     @SneakyThrows
     public String encryptAndEncode(String secret) {
+        if (this.publicKey == null) {
+            throw new IllegalArgumentException("For encryption a publicKey is required");
+        }
         Cipher encryptCipher = Cipher.getInstance("RSA");
         encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
         byte[] secretMessageBytes = secret.getBytes(Charset.defaultCharset());
@@ -62,6 +77,9 @@ public class KeyStore {
 
     @SneakyThrows
     public String decodeAndDecrypt(String encodedEncryptedSecret) {
+        if (this.privateKey == null) {
+            throw new IllegalArgumentException("For encryption a privateKey is required");
+        }
         Cipher decryptCipher = Cipher.getInstance("RSA");
         decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] decryptedMessageBytes = decryptCipher.doFinal(Base64.getDecoder().decode(encodedEncryptedSecret));
