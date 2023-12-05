@@ -17,9 +17,10 @@ import java.util.regex.Pattern;
  */
 public class RSAKeyStore implements KeyStore {
 
+    private final Pattern base64Pattern = Pattern.compile("(([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?){1}");
+
     private final PublicKey publicKey;
     private final PrivateKey privateKey;
-    private final Pattern base64Pattern = Pattern.compile("(([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?){1}");
 
     /**
      * Use this constructor for local development / testing where it does not matter which keypair encrypts and

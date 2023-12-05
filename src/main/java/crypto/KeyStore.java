@@ -7,6 +7,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public interface KeyStore {
+
     String encryptAndEncode(String secret) ;
 
     String decodeAndDecrypt(String encodedEncryptedSecret) ;
