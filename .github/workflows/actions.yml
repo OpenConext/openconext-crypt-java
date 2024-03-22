@@ -37,7 +37,7 @@ jobs:
           # Stage the file, commit and push
           git add .
           git commit -m "coverage badge"
-          git push origin master
+          git push origin main
 
       - name: Codecov
         uses: codecov/codecov-action@v1.3.1
