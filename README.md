@@ -1,6 +1,6 @@
 ## openconext-crypt-java
 
-[![Coverage](.github/badges/jacoco.svg)](https://github.com/OpenConext/openconext-crypt-java/actions/workflows/actions.yml)
+![Coverage](.github/badges/jacoco.svg)
 
 Create private / public keypair
 ```

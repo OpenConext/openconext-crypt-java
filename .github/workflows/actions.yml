@@ -27,5 +27,17 @@ jobs:
         with:
           generate-branches-badge: true
 
+      - name: setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
+      - name: commit
+        run: |
+          # Stage the file, commit and push
+          git add .
+          git commit -m "coverage badge"
+          git push origin master
+
       - name: Codecov
         uses: codecov/codecov-action@v1.3.1
