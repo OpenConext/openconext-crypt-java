@@ -10,14 +10,11 @@ import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.regex.Pattern;
 
 /**
  * Utility class for encrypting and decrypting secrets with RSA private / public keys
  */
 public class RSAKeyStore implements KeyStore {
-
-    private final Pattern base64Pattern = Pattern.compile("(([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?){1}");
 
     private final PublicKey publicKey;
     private final PrivateKey privateKey;
@@ -96,7 +93,16 @@ public class RSAKeyStore implements KeyStore {
 
     @Override
     public boolean isEncryptedSecret(String input) {
-        return input.length() == 344 && base64Pattern.matcher(input).matches();
+        return input.length() == 344 && this.validBase64(input);
+    }
+
+    private boolean validBase64(String input) {
+        try {
+            Base64.getDecoder().decode(input);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private String stripPublicKey(String publicKey) {

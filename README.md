@@ -1,5 +1,7 @@
 ## openconext-crypt-java
 
+[![Coverage](.github/badges/jacoco.svg)](https://github.com/OpenConext/openconext-crypt-java/actions/workflows/actions.yml)
+
 Create private / public keypair
 ```
 openssl genrsa -traditional -out private_key.pem 2048

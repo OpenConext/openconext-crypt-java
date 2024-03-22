@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
+import java.util.Base64;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,13 +35,34 @@ class KeyStoreTest {
         this.doEncryptAndDecrypt(keyStore, keyStore);
     }
 
+    @Test
+    void isEncryptedSecret() {
+        KeyStore keyStore = new RSAKeyStore();
+        String secret = "secret";
+        String encryptedSecret = keyStore.encryptAndEncode(secret);
+
+        assertTrue(keyStore.isEncryptedSecret(encryptedSecret));
+
+        assertFalse(keyStore.isEncryptedSecret("!"));
+        assertFalse(keyStore.isEncryptedSecret("!".repeat(344)));
+        //Corner case - waiting for a smart tester to pick this up
+        assertTrue(keyStore.isEncryptedSecret("a".repeat(344)));
+    }
+
+
     private void doEncryptAndDecrypt(KeyStore encryptionKeyStore, KeyStore decryptionKeyStore) {
         String secret = UUID.randomUUID().toString();
         String encryptedSecret = encryptionKeyStore.encryptAndEncode(secret);
+        String encryptedSecretDuplicate = encryptionKeyStore.encryptAndEncode(secret);
+        //Rainbow attacks are not possible
+        assertNotEquals(encryptedSecret, encryptedSecretDuplicate);
         assertTrue(decryptionKeyStore.isEncryptedSecret(encryptedSecret));
 
         String decodedSecret = decryptionKeyStore.decodeAndDecrypt(encryptedSecret);
         assertEquals(secret, decodedSecret);
+
+        String decodedSecretDuplicate = decryptionKeyStore.decodeAndDecrypt(encryptedSecretDuplicate);
+        assertEquals(secret, decodedSecretDuplicate);
     }
 
     @SneakyThrows
