@@ -3,7 +3,7 @@
 ![coverage](.github/badges/jacoco.svg)
 ![branches coverage](.github/badges/branches.svg)
 
-Create private / public keypair
+Create private / public keypair (always use 2048 bit modulus)
 ```
 openssl genrsa -traditional -out private_key.pem 2048
 openssl rsa -pubout -in private_key.pem -out public_key.pem
