@@ -3,6 +3,7 @@
 ![coverage](.github/badges/jacoco.svg)
 ![branches coverage](.github/badges/branches.svg)
 
+# Usage 
 Create private / public keypair (always use 2048 bit modulus)
 ```
 openssl genrsa -traditional -out private_key.pem 2048
