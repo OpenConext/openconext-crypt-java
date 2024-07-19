@@ -40,6 +40,8 @@ class KeyStoreTest {
 
         assertTrue(keyStore.isEncryptedSecret(encryptedSecret));
         assertFalse(keyStore.isEncryptedSecret("!"));
+        assertFalse(keyStore.isEncryptedSecret("!".repeat(342)));
+        assertFalse(keyStore.isEncryptedSecret("%".repeat(342)));
         //Corner case - waiting for a smart tester to pick this up
         assertTrue(keyStore.isEncryptedSecret("a".repeat(342)));
     }

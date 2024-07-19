@@ -99,12 +99,7 @@ public class RSAKeyStore implements KeyStore {
     }
 
     private boolean validBase64(String input) {
-        try {
-            Base64.decodeBase64(input);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+            return Base64.decodeBase64(input).length > 0;
     }
 
     private String stripPublicKey(String publicKey) {
