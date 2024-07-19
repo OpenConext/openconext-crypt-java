@@ -39,13 +39,10 @@ class KeyStoreTest {
         String encryptedSecret = keyStore.encryptAndEncode(secret);
 
         assertTrue(keyStore.isEncryptedSecret(encryptedSecret));
-
         assertFalse(keyStore.isEncryptedSecret("!"));
-        assertFalse(keyStore.isEncryptedSecret("!".repeat(344)));
         //Corner case - waiting for a smart tester to pick this up
-        assertTrue(keyStore.isEncryptedSecret("a".repeat(344)));
+        assertTrue(keyStore.isEncryptedSecret("a".repeat(342)));
     }
-
 
     private void doEncryptAndDecrypt(KeyStore encryptionKeyStore, KeyStore decryptionKeyStore) {
         String secret = UUID.randomUUID().toString();

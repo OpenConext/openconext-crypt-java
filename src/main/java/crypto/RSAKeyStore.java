@@ -2,6 +2,7 @@ package crypto;
 
 
 import lombok.SneakyThrows;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
 import java.nio.charset.Charset;
@@ -9,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
+
 
 /**
  * Utility class for encrypting and decrypting secrets with RSA private / public keys
@@ -44,7 +45,7 @@ public class RSAKeyStore implements KeyStore {
         publicKeyContent = stripPublicKey(publicKeyContent);
 
         KeyFactory kf = KeyFactory.getInstance("RSA");
-        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyContent));
+        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.decodeBase64(publicKeyContent));
         this.publicKey = kf.generatePublic(keySpecX509);
         this.privateKey = null;
     }
@@ -61,7 +62,7 @@ public class RSAKeyStore implements KeyStore {
 
         KeyFactory kf = KeyFactory.getInstance("RSA");
 
-        PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyContent));
+        PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateKeyContent));
         this.privateKey = kf.generatePrivate(keySpecPKCS8);
         this.publicKey = null;
     }
@@ -76,7 +77,7 @@ public class RSAKeyStore implements KeyStore {
         encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
         byte[] secretMessageBytes = secret.getBytes(Charset.defaultCharset());
         byte[] encryptedMessageBytes = encryptCipher.doFinal(secretMessageBytes);
-        return Base64.getEncoder().encodeToString(encryptedMessageBytes);
+        return new String(Base64.encodeBase64(encryptedMessageBytes, false, true));
     }
 
     @Override
@@ -87,19 +88,19 @@ public class RSAKeyStore implements KeyStore {
         }
         Cipher decryptCipher = Cipher.getInstance("RSA");
         decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
-        byte[] decryptedMessageBytes = decryptCipher.doFinal(Base64.getDecoder().decode(encodedEncryptedSecret));
+        byte[] decryptedMessageBytes = decryptCipher.doFinal(Base64.decodeBase64(encodedEncryptedSecret));
         return new String(decryptedMessageBytes, StandardCharsets.UTF_8);
     }
 
     @Override
     public boolean isEncryptedSecret(String input) {
-        // (int) Math.ceil(2048.0/ 8 / 3) * 4 = 344;
-        return input.length() == 344 && this.validBase64(input);
+        // (int) Math.ceil(2048.0/ 8 / 3) * 4 = 344 - 2 = 342;
+        return input.length() == 342 && this.validBase64(input);
     }
 
     private boolean validBase64(String input) {
         try {
-            Base64.getDecoder().decode(input);
+            Base64.decodeBase64(input);
             return true;
         } catch (IllegalArgumentException e) {
             return false;
