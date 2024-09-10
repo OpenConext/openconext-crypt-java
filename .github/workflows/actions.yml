@@ -29,12 +29,6 @@ jobs:
         with:
           generate-branches-badge: true
 
-      - name: Maven dependency tree
-        run: |
-          mvn dependency:tree
-          mvn -v
-          mvn dependency:resolve-plugins
-
       - name: Log coverage percentage
         run: |
           echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
