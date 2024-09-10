@@ -31,7 +31,9 @@ jobs:
 
       - name: Maven dependency tree
         run: |
-          echo "mvn dependency:tree"
+          mvn dependency:tree
+          mvn -v
+          mvn dependency:resolve-plugins
 
       - name: Log coverage percentage
         run: |
