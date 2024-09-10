@@ -27,7 +27,11 @@ jobs:
         id: jacoco
         uses: cicirello/jacoco-badge-generator@v2
         with:
-          jacoco-csv-file: "**/jacoco.csv"
+          generate-branches-badge: true
+
+      - name: Maven dependency tree
+        run: |
+          echo "mvn dependency:tree"
 
       - name: Log coverage percentage
         run: |
