@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class KeyStoreTest extends AbstractKeyStoreTest {
+class RSAKeyStoreTest extends AbstractKeyStoreTest {
 
 
     @Override
@@ -29,7 +29,10 @@ class KeyStoreTest extends AbstractKeyStoreTest {
         assertFalse(keyStore.isEncryptedSecret("!"));
         assertFalse(keyStore.isEncryptedSecret("!".repeat(342)));
         assertFalse(keyStore.isEncryptedSecret("%".repeat(342)));
-        //Corner case - waiting for a smart tester to pick this up
+        assertFalse(keyStore.isEncryptedSecret(String.format("%s.%s.%s",
+                "A".repeat(5),
+                "X".repeat(344),
+                "Y".repeat(24))));        //Corner case - waiting for a smart tester to pick this up
         assertTrue(keyStore.isEncryptedSecret("a".repeat(342)));
     }
 

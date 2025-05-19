@@ -9,7 +9,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -19,8 +23,8 @@ import java.util.Base64;
  */
 public class HybridRSAKeyStore implements KeyStore {
 
-    private final PublicKey publicKey;
-    private final PrivateKey privateKey;
+    private final RSAPublicKey publicKey;
+    private final RSAPrivateKey privateKey;
     private final SecretKey aesKey;
 
     /**
@@ -32,8 +36,8 @@ public class HybridRSAKeyStore implements KeyStore {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(2048);
         KeyPair pair = generator.generateKeyPair();
-        this.publicKey = pair.getPublic();
-        this.privateKey = pair.getPrivate();
+        this.publicKey = (RSAPublicKey) pair.getPublic();
+        this.privateKey = (RSAPrivateKey) pair.getPrivate();
         this.aesKey = generateAESKey();
     }
 
@@ -50,7 +54,11 @@ public class HybridRSAKeyStore implements KeyStore {
 
         KeyFactory kf = KeyFactory.getInstance("RSA");
         X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyContent));
-        this.publicKey = kf.generatePublic(keySpecX509);
+        this.publicKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+        int modulus = this.publicKey.getModulus().bitLength();
+        if (modulus != 2048) {
+            throw new IllegalArgumentException("Private key must have modulus of 2048, not " + modulus);
+        }
         this.privateKey = null;
         this.aesKey = generateAESKey();
     }
@@ -68,7 +76,12 @@ public class HybridRSAKeyStore implements KeyStore {
         KeyFactory kf = KeyFactory.getInstance("RSA");
 
         PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyContent));
-        this.privateKey = kf.generatePrivate(keySpecPKCS8);
+        this.privateKey = (RSAPrivateKey) kf.generatePrivate(keySpecPKCS8);
+        int modulus = this.privateKey.getModulus().bitLength();
+        if (modulus != 2048) {
+            throw new IllegalArgumentException("Private key must have modulus of 2048, not " + modulus);
+        }
+
         this.publicKey = null;
         this.aesKey = null;
     }

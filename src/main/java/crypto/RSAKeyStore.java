@@ -95,7 +95,7 @@ public class RSAKeyStore implements KeyStore {
     @Override
     public boolean isEncryptedSecret(String input) {
         // (int) Math.ceil(2048.0/ 8 / 3) * 4 = 344 - 2 = 342;
-        return input.length() >= 342 && this.validBase64(input);
+        return input.length() >= 342 && input.length() <= 344 && this.validBase64(input);
     }
 
     private boolean validBase64(String input) {

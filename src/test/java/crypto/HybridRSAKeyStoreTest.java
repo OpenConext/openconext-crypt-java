@@ -2,8 +2,8 @@ package crypto;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class HybridRSAKeyStoreTest extends AbstractKeyStoreTest {
 
@@ -32,6 +32,15 @@ class HybridRSAKeyStoreTest extends AbstractKeyStoreTest {
                 "A".repeat(5),
                 "X".repeat(344),
                 "Y".repeat(24))));
+    }
+
+    @Test
+    void ensureCorrectModules() {
+        String privateKeyContent = this.readFile("private_key_1024_pkcs8.pem");
+        String publicKeyContent = this.readFile("public_key_1024.pem");
+
+        assertThrows(IllegalArgumentException.class, () -> new HybridRSAKeyStore(publicKeyContent, false));
+        assertThrows(IllegalArgumentException.class, () -> new HybridRSAKeyStore(privateKeyContent));
     }
 
 }

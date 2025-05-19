@@ -53,7 +53,7 @@ abstract class AbstractKeyStoreTest {
     }
 
     @SneakyThrows
-    private String readFile(String path) {
+    protected String readFile(String path) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
         return IOUtils.toString(inputStream, Charset.defaultCharset());
     }
