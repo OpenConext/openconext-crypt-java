@@ -1,36 +1,37 @@
 package crypto;
 
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class KeyStoreTest extends AbstractKeyStoreTest {
-
+class HybridRSAKeyStoreTest extends AbstractKeyStoreTest {
 
     @Override
     KeyStore encryptionKeyStore(String publicKeyContent) {
-        return new RSAKeyStore(publicKeyContent, false);
+        return new HybridRSAKeyStore(publicKeyContent, false);
     }
 
     @Override
     KeyStore decryptionKeyStore(String privateKeyContent) {
-        return new RSAKeyStore(privateKeyContent);
+        return new HybridRSAKeyStore(privateKeyContent);
     }
 
     @Test
     void isEncryptedSecret() {
-        KeyStore keyStore = new RSAKeyStore();
-        String secret = "secret";
+        KeyStore keyStore = new HybridRSAKeyStore();
+        String secret = "Top secret message!!!!";
         String encryptedSecret = keyStore.encryptAndEncode(secret);
 
         assertTrue(keyStore.isEncryptedSecret(encryptedSecret));
         assertFalse(keyStore.isEncryptedSecret("!"));
-        assertFalse(keyStore.isEncryptedSecret("!".repeat(342)));
-        assertFalse(keyStore.isEncryptedSecret("%".repeat(342)));
+        assertFalse(keyStore.isEncryptedSecret("a".repeat(342)));
+
         //Corner case - waiting for a smart tester to pick this up
-        assertTrue(keyStore.isEncryptedSecret("a".repeat(342)));
+        assertTrue(keyStore.isEncryptedSecret(String.format("%s.%s.%s",
+                "A".repeat(5),
+                "X".repeat(344),
+                "Y".repeat(24))));
     }
 
 }

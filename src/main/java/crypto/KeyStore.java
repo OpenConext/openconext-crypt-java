@@ -7,4 +7,5 @@ public interface KeyStore {
     String decodeAndDecrypt(String encodedEncryptedSecret);
 
     boolean isEncryptedSecret(String input);
+
 }

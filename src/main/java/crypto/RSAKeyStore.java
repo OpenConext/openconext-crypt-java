@@ -34,7 +34,7 @@ public class RSAKeyStore implements KeyStore {
     }
 
     /**
-     * Use this constructor if you have need to encrypt secrets. See the README for how to create keys and see the test
+     * Use this constructor if you need to to encrypt secrets. See the README for how to create keys and see the test
      * suite for usages.
      *
      * @param publicKeyContent raw RSA public key
@@ -51,7 +51,7 @@ public class RSAKeyStore implements KeyStore {
     }
 
     /**
-     * Use this constructor if you have need to decrypt secrets. See the README for how to create keys and see the test
+     * Use this constructor if you need to decrypt secrets. See the README for how to create keys and see the test
      * suite for usages.
      *
      * @param privateKeyContent raw RSA private key
@@ -99,7 +99,7 @@ public class RSAKeyStore implements KeyStore {
     }
 
     private boolean validBase64(String input) {
-            return Base64.decodeBase64(input).length > 0;
+        return Base64.decodeBase64(input).length > 0;
     }
 
     private String stripPublicKey(String publicKey) {
