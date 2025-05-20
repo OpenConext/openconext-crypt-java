@@ -25,7 +25,6 @@ public class HybridRSAKeyStore implements KeyStore {
 
     private final RSAPublicKey publicKey;
     private final RSAPrivateKey privateKey;
-    private final SecretKey aesKey;
 
     /**
      * Use this constructor for local development / testing where it does not matter which keypair encrypts and
@@ -38,7 +37,6 @@ public class HybridRSAKeyStore implements KeyStore {
         KeyPair pair = generator.generateKeyPair();
         this.publicKey = (RSAPublicKey) pair.getPublic();
         this.privateKey = (RSAPrivateKey) pair.getPrivate();
-        this.aesKey = generateAESKey();
     }
 
     /**
@@ -60,7 +58,6 @@ public class HybridRSAKeyStore implements KeyStore {
             throw new IllegalArgumentException("Private key must have modulus of 2048, not " + modulus);
         }
         this.privateKey = null;
-        this.aesKey = generateAESKey();
     }
 
     /**
@@ -81,9 +78,7 @@ public class HybridRSAKeyStore implements KeyStore {
         if (modulus != 2048) {
             throw new IllegalArgumentException("Private key must have modulus of 2048, not " + modulus);
         }
-
         this.publicKey = null;
-        this.aesKey = null;
     }
 
     @Override
@@ -92,6 +87,8 @@ public class HybridRSAKeyStore implements KeyStore {
         if (this.publicKey == null) {
             throw new IllegalArgumentException("For encryption a publicKey is required");
         }
+        SecretKey aesKey = generateAESKey();
+
         Cipher aesCipher = Cipher.getInstance("AES/CBC/PKCS5Padding"); // Using CBC with PKCS5Padding is common
         aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
         byte[] encryptedSecretBytes = aesCipher.doFinal(secret.getBytes(StandardCharsets.UTF_8));
